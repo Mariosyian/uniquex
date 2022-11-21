@@ -1,0 +1,34 @@
+{
+  "name": "uniquex",
+  "version": "0.1.0",
+  "description": "UniqueX assessment - Marios Yiannakou",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint",
+    "start": "npx nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mariosyian/uniquex.git"
+  },
+  "keywords": [
+    "uniquex"
+  ],
+  "author": "Marios Yiannakou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mariosyian/uniquex/issues"
+  },
+  "homepage": "https://github.com/Mariosyian/uniquex#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.20"
+  }
+}

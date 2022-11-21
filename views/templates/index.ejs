@@ -1,0 +1,18 @@
+<%- include('header') %>
+<form action="/sort" enctype="multipart/form-data" method="POST">
+    <div class="col-12 col-xl-4 inline">
+        <input type="file" name="data" class="btn btn-outline-dark" required />
+    </div>
+    <div class="col-12 col-xl-3 inline">
+        <select name="sorting" id="sortingBtn" class="form-control">
+            <option value="" selected>Sorting algorithm ...</option>
+            <% algorithms.forEach((algorithm) => { %>
+            <option value="<%= algorithm %>"><%= algorithm %></option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="col-12 col-xl-3 inline">
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </div>
+</form>
+<%- include('footer') %>

@@ -14,15 +14,18 @@ const port = process.env.PORT || 3000;
 const homeURI = process.env.HOME_URI || `http://localhost:${port}/`;
 
 const sortingAlgorithms = new Map();
-sortingAlgorithms.set('bubble', () => {});
-sortingAlgorithms.set('heap', () => {});
-sortingAlgorithms.set('merge', () => {});
+sortingAlgorithms.set('bubble', sorts.bubbleSort);
+sortingAlgorithms.set('heap', sorts.heapSort);
+sortingAlgorithms.set('merge', sorts.mergeSort);
 
 app.get('/', (req, res) => {
   logResponse(res);
   res.render(
       'templates/index',
-      {algorithms: Array.from(sortingAlgorithms.keys())},
+      {
+        students: [],
+        algorithms: Array.from(sortingAlgorithms.keys()),
+      },
   );
 });
 
@@ -49,11 +52,19 @@ app.post('/sort', (req, res) => {
   }
 
   const text = req.files.data.data.toString('utf-8');
-  const algorithm = req.body.sorting;
+  const parsedText = text.split('\r\n')
+      .map((student) => {
+        return student.split(',');
+      })
+      .filter((student) => {
+        return student.length > 1;
+      });
 
-  console.log(text);
-  // TODO: Parse file data and apply sorting algorithm. Break down into (id, student name, grade)???
-  res.redirect('/');
+  const sortedText = sortingAlgorithms.get(req.body.sorting)(parsedText);
+  res.render('templates/index', {
+    students: sortedText,
+    algorithms: sortingAlgorithms,
+  });
 });
 
 app.listen(port, () => {

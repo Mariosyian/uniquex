@@ -1,112 +1,135 @@
 /* eslint-disable require-jsdoc */
-const bubbleSort = (list) => {
-  for (i = 0; i < list.length; i++) {
-    for (j = 0; j < ( list.length - i -1 ); j++) {
-      if (list[j] > list[j+1]) {
-        const temp = list[j];
-        list[j] = list[j + 1];
-        list[j+1] = temp;
-      }
+const equals = (a, b, invert) => {
+  if (invert) {
+    if (a[1] < b[1]) {
+      return -1;
+    } else if (a[1] > b[1]) {
+      return 1;
+    }
+  } else {
+    if (a[1] < b[1]) {
+      return 1;
+    } else if (a[1] > b[1]) {
+      return -1;
     }
   }
 
-  return list;
+  return 0;
 };
 
-const heapSort = (list) => {
-  function sort(list) {
-    const N = list.length;
-
-    for (i = Math.floor(N / 2) - 1; i >= 0; i--) {
-      heapify(list, N, i);
-    }
-
-    for (i = N - 1; i > 0; i--) {
-      const temp = list[0];
-      list[0] = list[i];
-      list[i] = temp;
-
-      heapify(list, i, 0);
+// TODO: Add `invert` functionality
+module.exports = {
+  bubbleSort: (list) => {
+    for (i = 0; i < list.length; i++) {
+      for (j = 0; j < ( list.length - i -1 ); j++) {
+        if (equals(list[j], list[j+1]) === -1) {
+          const temp = list[j];
+          list[j] = list[j + 1];
+          list[j+1] = temp;
+        }
+      }
     }
 
     return list;
-  }
+  },
+  heapSort: (list) => {
+    function sort(list) {
+      const N = list.length;
 
-  function heapify(list, N, i) {
-    let largest = i;
-    const left = 2 * i + 1;
-    const right = 2 * i + 2;
+      for (i = Math.floor(N / 2) - 1; i >= 0; i--) {
+        heapify(list, N, i);
+      }
 
-    if (left < N && list[left] > list[largest]) {
-      largest = left;
+      for (i = N - 1; i > 0; i--) {
+        const temp = list[0];
+        list[0] = list[i];
+        list[i] = temp;
+
+        heapify(list, i, 0);
+      }
+
+      return list;
     }
 
-    if (right < N && list[right] > list[largest]) {
-      largest = right;
+    function heapify(list, N, i) {
+      let largest = i;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+
+      if (left < N && equals(list[left], list[largest]) === 1) {
+        largest = left;
+      }
+
+      if (right < N && equals(list[right], list[largest]) === 1) {
+        largest = right;
+      }
+
+      if (largest != i) {
+        const swap = list[i];
+        list[i] = list[largest];
+        list[largest] = swap;
+
+        heapify(list, N, largest);
+      }
     }
 
-    if (largest != i) {
-      const swap = list[i];
-      list[i] = list[largest];
-      list[largest] = swap;
+    return sort(list);
+  },
+  mergeSort: (list, left, right) => {
+    function merge(list, left, mid, right) {
+      const n1 = mid - left + 1;
+      const n2 = right - mid;
 
-      heapify(list, N, largest);
-    }
-  }
+      const L = new Array(n1);
+      const R = new Array(n2);
 
-  return sort(list);
-};
+      for (i = 0; i < n1; i++) {
+        L[i] = list[left + i];
+      }
+      for (j = 0; j < n2; j++) {
+        R[j] = list[mid + 1 + j];
+      }
 
-const mergeSort = (list, left, right) => {
-  function merge(list, left, mid, right) {
-    const n1 = mid - left + 1;
-    const n2 = right - mid;
+      let i = 0;
+      let j = 0;
+      let k = left;
 
-    const L = new Array(n1);
-    const R = new Array(n2);
+      while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+          list[k] = L[i];
+          i++;
+        } else {
+          list[k] = R[j];
+          j++;
+        }
+        k++;
+      }
 
-    for (i = 0; i < n1; i++) {
-      L[i] = list[left + i];
-    }
-    for (j = 0; j < n2; j++) {
-      R[j] = list[mid + 1 + j];
-    }
-
-    let i = 0;
-    let j = 0;
-    let k = left;
-
-    while (i < n1 && j < n2) {
-      if (L[i] <= R[j]) {
+      while (i < n1) {
         list[k] = L[i];
         i++;
-      } else {
+        k++;
+      }
+
+      while (j < n2) {
         list[k] = R[j];
         j++;
+        k++;
       }
-      k++;
+
+      return list;
     }
 
-    while (i < n1) {
-      list[k] = L[i];
-      i++;
-      k++;
+    function mSort(list, left, right) {
+      if (left >= right) {
+        return list;
+      }
+      const mid = left + parseInt((right-left)/2);
+      list = mSort(list, left, mid);
+      list = mSort(list, mid+1, right);
+      list = merge(list, left, mid, right);
     }
 
-    while (j < n2) {
-      list[k] = R[j];
-      j++;
-      k++;
-    }
-  }
-
-  function mergeSort(list, left, right) {
-    if (left >= right) {
-      return;
-    }
-    const mid = left+ parseInt((right-left)/2);
-    mergeSort(list, left, mid);
-    mergeSort(list, mid+1, right);
-    merge(list, left, mid, right);
-  }
+    return mSort(list, left, right);
+  },
 };

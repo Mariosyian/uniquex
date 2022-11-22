@@ -15,4 +15,26 @@
         <input type="submit" value="Submit" class="btn btn-primary" />
     </div>
 </form>
+<% if (students.length > 0) { %>
+<div class="container-fluid">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Student Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach((student, index) => { %>
+            <tr>
+                <td><%= index %></td>
+                <td><%= student[0] %></td>
+                <td><%= student[1] %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+<% } %>
 <%- include('footer') %>

@@ -1,4 +1,10 @@
 <%- include('header') %>
+<% if (saveSuccess) { %>
+<div class="alert alert-success">The records were successfully saved!</div>
+<% } %>
+<% if (saveError) { %>
+<div class="alert alert-danger">There was an error saving the file!</div>
+<% } %>
 <form action="/sort" enctype="multipart/form-data" method="POST">
     <div class="col-12 col-xl-4 inline">
         <input type="file" name="data" class="btn btn-outline-dark" required />
@@ -16,7 +22,23 @@
     </div>
 </form>
 <% if (students.length > 0) { %>
+<hr>
 <div class="container-fluid">
+    <p>It took <%= time %> seconds to process <%= students.length %> records.</p>
+    <div>
+        <form action="/save/asc" enctype="multipart/form-data" method="POST" class="inline">
+            <div class="col-5 col-md-3">
+                <input type="text" name="data" hidden value="<%= students.join('^') %>">
+                <input type="submit" value="Save in ascending order" class="btn btn-primary" />
+            </div>
+        </form>
+        <form action="/save/desc" enctype="multipart/form-data" method="POST" class="inline">
+            <div class="col-5 col-md-3">
+                <input type="text" name="data" hidden value="<%= students.join('^') %>">
+                <input type="submit" value="Save in descending order" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -28,7 +50,7 @@
         <tbody>
             <% students.forEach((student, index) => { %>
             <tr>
-                <td><%= index %></td>
+                <td><%= index + 1 %></td>
                 <td><%= student[0] %></td>
                 <td><%= student[1] %></td>
             </tr>

@@ -17,7 +17,6 @@ const equals = (a, b, invert) => {
   return 0;
 };
 
-// TODO: Add `invert` functionality
 module.exports = {
   bubbleSort: (list) => {
     for (i = 0; i < list.length; i++) {
@@ -56,11 +55,11 @@ module.exports = {
       const left = 2 * i + 1;
       const right = 2 * i + 2;
 
-      if (left < N && equals(list[left], list[largest]) === 1) {
+      if (left < N && equals(list[left], list[largest]) === -1) {
         largest = left;
       }
 
-      if (right < N && equals(list[right], list[largest]) === 1) {
+      if (right < N && equals(list[right], list[largest]) === -1) {
         largest = right;
       }
 
@@ -94,7 +93,7 @@ module.exports = {
       let j = 0;
       let k = left;
 
-      while (i < n1 && j < n2) {
+      while (equals([0, i], n1) === 1 && equals([0, j], n2) === 1) {
         if (L[i] <= R[j]) {
           list[k] = L[i];
           i++;
@@ -105,13 +104,13 @@ module.exports = {
         k++;
       }
 
-      while (i < n1) {
+      while (equals([0, i], n1) === 1) {
         list[k] = L[i];
         i++;
         k++;
       }
 
-      while (j < n2) {
+      while (equals([0, j], n2) === 1) {
         list[k] = R[j];
         j++;
         k++;

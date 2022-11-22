@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const fs = require('fs');
 const sorts = require('./sorts');
 
 const app = express();
@@ -25,6 +26,9 @@ app.get('/', (req, res) => {
       {
         students: [],
         algorithms: Array.from(sortingAlgorithms.keys()),
+        time: 0,
+        saveSuccess: false,
+        saveError: false,
       },
   );
 });
@@ -52,7 +56,7 @@ app.post('/sort', (req, res) => {
   }
 
   const text = req.files.data.data.toString('utf-8');
-  const parsedText = text.split('\r\n')
+  const parsedText = text.split('\n')
       .map((student) => {
         return student.split(',');
       })
@@ -60,11 +64,24 @@ app.post('/sort', (req, res) => {
         return student.length > 1;
       });
 
+  const before = Date.now();
   const sortedText = sortingAlgorithms.get(req.body.sorting)(parsedText);
+  const after = Date.now();
   res.render('templates/index', {
     students: sortedText,
-    algorithms: sortingAlgorithms,
+    algorithms: Array.from(sortingAlgorithms.keys()),
+    time: (after - before) / 1000,
+    saveSuccess: false,
+    saveError: false,
   });
+});
+
+app.post('/save/asc', (req, res) => {
+  writeToFile(res, req.body.data.split('^'), 'output-asc.txt');
+});
+
+app.post('/save/desc', (req, res) => {
+  writeToFile(res, req.body.data.split('^').reverse(), 'output-desc.txt');
 });
 
 app.listen(port, () => {
@@ -82,4 +99,38 @@ function logResponse(res) {
         res.req.url + ' with response: ' +
         res.statusCode,
   );
+}
+
+/**
+ * Writes the given data array to the given file.
+ * Each element in the array is a new-line delimited record.
+ * @param {Response} res
+ * @param {String[]} data
+ * @param {String} fileName
+ */
+function writeToFile(res, data, fileName) {
+  const file = fs.createWriteStream(`${__dirname}/${fileName}`);
+  file.on('error', (err) => {
+    res.render('templates/index', {
+      students: [],
+      algorithms: Array.from(sortingAlgorithms.keys()),
+      time: 0,
+      saveSuccess: false,
+      saveError: true,
+    });
+  });
+  data.forEach(
+      (student) => {
+        file.write(`${student}\n`);
+      },
+  );
+  file.end();
+
+  res.render('templates/index', {
+    students: [],
+    algorithms: Array.from(sortingAlgorithms.keys()),
+    time: 0,
+    saveSuccess: true,
+    saveError: false,
+  });
 }
